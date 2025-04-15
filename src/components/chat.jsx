@@ -31,7 +31,7 @@ const Chat = ({ user }) => {
                     .select('*')
                     .or(`user_id.eq.${user.uid},recipient_id.eq.${user.uid}`)
                     .order('created_at', { ascending: true });
-
+    
                 if (error) {
                     console.error("Error fetching messages:", error.message);
                 } else {
@@ -41,30 +41,34 @@ const Chat = ({ user }) => {
                 console.error("Unexpected error fetching messages:", error.message);
             }
         };
-
+    
         fetchMessages();
-
+    
         // Subscribe to real-time updates
         const channel = supabase.channel('chat');
         channel.on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, (payload) => {
             setMessages((prev) => [...prev, payload.new]);
         });
         channel.subscribe();
-
+    
         return () => {
             channel.unsubscribe();
         };
-    }, [user.uid]);
+    }, [recipientId]);
 
     // Send message
     const sendMessage = async () => {
         if (!newMessage.trim() || !recipientId) return;
-
+    
         try {
             const { error } = await supabase.from('messages').insert([
-                { text: newMessage, user_id: user.uid, recipient_id: recipientId },
+                {
+                    text: newMessage,
+                    user_id: user.uid,
+                    recipient_id: recipientId, // Include the recipient's ID
+                },
             ]);
-
+    
             if (error) {
                 console.error("Error sending message:", error.message);
             } else {
