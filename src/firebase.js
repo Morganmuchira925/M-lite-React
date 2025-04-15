@@ -11,12 +11,12 @@ import {
 
 
 const firebaseConfig = {
-    apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
-    authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
-    projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
-    storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
-    appId: process.env.REACT_APP_FIREBASE_APP_ID,
+    apiKey: "AIzaSyDQZKuaMHQ-65XfGFP0bTKMmKsTx9JKE6k",
+    authDomain: "m-lite-chat-app-30b2b.firebaseapp.com",
+    projectId: "m-lite-chat-app-30b2b",
+    storageBucket: "m-lite-chat-app-30b2b.firebasestorage.app",
+    messagingSenderId: "332713997938",
+    appId: "1:332713997938:web:10510a0149dc0051b6f4eb"
 };
 
 const app = initializeApp(firebaseConfig);
