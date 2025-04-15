@@ -21,6 +21,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+
 // Export everything in one statement
 export {
     auth,
@@ -38,7 +39,7 @@ export const requestNotificationPermission = async () => {
         const permission = await Notification.requestPermission();
         if (permission === 'granted') {
             const token = await getToken(messaging, {
-                vapidKey: 'YOUR_VAPID_KEY',
+                vapidKey: process.env.REACT_APP_FIREBASE_VAPID_KEY,//Use the VAPID key here  
             });
             console.log("Notification token:", token);
         }
