@@ -54,7 +54,7 @@ const Chat = ({ user }) => {
         return () => {
             channel.unsubscribe();
         };
-    }, [recipientId]);
+    }, [user.uid]);
 
     // Send message
     const sendMessage = async () => {
