@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import supabase from '../supabase'; // Import as default
 import { auth } from '../firebase';
+import { IconName } from "react-icons/bi";
+import { BiSolidAdjust } from "react-icons/bi";
+import { BiMessageDetail } from "react-icons/bi";
+import { BiExit } from "react-icons/bi";
+import { BiEnvelope } from "react-icons/bi";
 
 const Chat = ({ user }) => {
     const [messages, setMessages] = useState([]);
@@ -97,13 +102,13 @@ const Chat = ({ user }) => {
     return (
         <div className={`chat-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
             <div className="header">
-                <h2>💬</h2>
+                <h2><BiMessageDetail /></h2>
                 <div style={{ display: 'flex', gap: '1rem' }}>
                     <button onClick={toggleDarkMode} className="mode-toggle-button">
-                        {isDarkMode ? '☀' : '🌑'}
+                        {isDarkMode ? <BiSolidAdjust /> : <BiSolidAdjust />}
                     </button>
                     <button onClick={handleLogout} className="logout-button">
-                        🚪
+                    <BiExit />
                     </button>
                 </div>
             </div>
@@ -131,7 +136,7 @@ const Chat = ({ user }) => {
                     className="message-input"
                 />
                 <button onClick={sendMessage} className="send-button">
-                    📩
+                    <BiEnvelope />
                 </button>
             </div>
         </div>
