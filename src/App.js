@@ -9,7 +9,7 @@ import Profile from './components/profile';
 const App = () => {
     // State to track the authenticated user
     const [user, setUser] = useState(null);
-    const navigate = useNavigate(); // Use the navigate function
+    const navigate = useNavigate(); // Navigation hook
 
     // Listen for changes in the authentication state
     useEffect(() => {
@@ -26,28 +26,33 @@ const App = () => {
     }, []);
 
     return (
-        <div>
+        <div className="app-container">
             {/* Conditional Rendering Based on Authentication */}
             {!user ? (
-                // If no user is logged in, show the Login or Sign-Up page
+                // Public Routes: Login and Sign-Up
                 <Routes>
+                    {/* Login Route */}
                     <Route
                         path="/login"
                         element={<Login onSignUpClick={() => navigate('/signup')} />}
                     />
+
+                    {/* Sign-Up Route */}
                     <Route
                         path="/signup"
                         element={<SignUp onLoginClick={() => navigate('/login')} />}
                     />
+
+                    {/* Redirect unknown routes to Login */}
                     <Route path="*" element={<Navigate to="/login" />} />
                 </Routes>
             ) : (
-                // If a user is logged in, show the routes for Chat and Profile
+                // Protected Routes: Chat and Profile
                 <Routes>
                     {/* Default route redirects to the Chat screen */}
                     <Route path="/" element={<Chat user={user} />} />
 
-                    {/* Route for the Profile page */}
+                    {/* Profile Route */}
                     <Route path="/profile" element={<Profile user={user} />} />
 
                     {/* Redirect unknown routes to the Chat screen */}
