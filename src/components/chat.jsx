@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import supabase from '../supabase'; // Import as default
-import { auth } from '../firebase';
-import { IconName } from "react-icons/bi";
-import { BiSolidAdjust } from "react-icons/bi";
-import { BiMessageDetail } from "react-icons/bi";
-import { BiExit } from "react-icons/bi";
-import { BiEnvelope } from "react-icons/bi";
+import supabase from '../supabase'; // Import Supabase client
+import { BiSolidAdjust, BiMessageDetail, BiExit, BiEnvelope } from "react-icons/bi";
 
 const Chat = ({ user }) => {
     const [messages, setMessages] = useState([]);
@@ -34,9 +29,9 @@ const Chat = ({ user }) => {
                 const { data, error } = await supabase
                     .from('messages')
                     .select('*')
-                    .or(`user_id.eq.${user.uid},recipient_id.eq.${user.uid}`)
+                    .or(`user_id.eq.${user.id},recipient_id.eq.${user.id}`)
                     .order('created_at', { ascending: true });
-    
+
                 if (error) {
                     console.error("Error fetching messages:", error.message);
                 } else {
@@ -46,34 +41,34 @@ const Chat = ({ user }) => {
                 console.error("Unexpected error fetching messages:", error.message);
             }
         };
-    
+
         fetchMessages();
-    
+
         // Subscribe to real-time updates
         const channel = supabase.channel('chat');
         channel.on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, (payload) => {
             setMessages((prev) => [...prev, payload.new]);
         });
         channel.subscribe();
-    
+
         return () => {
             channel.unsubscribe();
         };
-    }, [recipientId]);
+    }, [recipientId, user]);
 
     // Send message
     const sendMessage = async () => {
         if (!newMessage.trim() || !recipientId) return;
-    
+
         try {
             const { error } = await supabase.from('messages').insert([
                 {
                     text: newMessage,
-                    user_id: user.uid,
-                    recipient_id: recipientId, // Include the recipient's ID
+                    user_id: user.id, // Use Supabase user ID
+                    recipient_id: recipientId,
                 },
             ]);
-    
+
             if (error) {
                 console.error("Error sending message:", error.message);
             } else {
@@ -84,13 +79,17 @@ const Chat = ({ user }) => {
         }
     };
 
-    // Handle logout
+    // Handle logout using Supabase
     const handleLogout = async () => {
         try {
-            await auth.signOut();
-            console.log("User logged out successfully!");
+            const { error } = await supabase.auth.signOut();
+            if (error) {
+                console.error("Error logging out:", error.message);
+            } else {
+                console.log("User logged out successfully!");
+            }
         } catch (error) {
-            console.error("Error logging out:", error.message);
+            console.error("Unexpected error during logout:", error.message);
         }
     };
 
@@ -108,7 +107,7 @@ const Chat = ({ user }) => {
                         {isDarkMode ? <BiSolidAdjust /> : <BiSolidAdjust />}
                     </button>
                     <button onClick={handleLogout} className="logout-button">
-                    <BiExit />
+                        <BiExit />
                     </button>
                 </div>
             </div>
@@ -122,7 +121,7 @@ const Chat = ({ user }) => {
             </div>
             <div className="messages">
                 {messages.map((msg, index) => (
-                    <div key={index} className={`message ${msg.user_id === user.uid ? 'sent' : 'received'}`}>
+                    <div key={index} className={`message ${msg.user_id === user.id ? 'sent' : 'received'}`}>
                         <div className="message-bubble">{msg.text}</div>
                     </div>
                 ))}

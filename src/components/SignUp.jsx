@@ -1,19 +1,27 @@
 import React, { useState } from 'react';
-import { auth, createUserWithEmailAndPassword } from '../firebase';
+import supabase from '../supabase'; // Import Supabase client
 import '../styles.css'; // Import the CSS file
 
 const SignUp = ({ onLoginClick }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    // Handle email/password sign-up
+    // Handle email/password sign-up using Supabase
     const handleSignUp = async (e) => {
         e.preventDefault();
         try {
-            await createUserWithEmailAndPassword(auth, email, password);
-            console.log("User signed up successfully!");
+            const { data, error } = await supabase.auth.signUp({
+                email,
+                password,
+            });
+
+            if (error) {
+                console.error("Sign-up error:", error.message);
+            } else {
+                console.log("User signed up successfully!", data);
+            }
         } catch (error) {
-            console.error("Sign-up error:", error.message);
+            console.error("Unexpected error during sign-up:", error.message);
         }
     };
 

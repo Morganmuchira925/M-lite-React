@@ -3,26 +3,34 @@ import {
     auth,
     GoogleAuthProvider,
     signInWithPopup,
-    signInWithEmailAndPassword,
 } from '../firebase';
+import supabase from '../supabase'; // Import Supabase client
 import '../styles.css'; // Import the CSS file
 
 const Login = ({ onSignUpClick }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    // Handle email/password login
+    // Handle email/password login using Supabase
     const handleEmailPasswordLogin = async (e) => {
         e.preventDefault();
         try {
-            await signInWithEmailAndPassword(auth, email, password);
-            console.log("User logged in successfully!");
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email,
+                password,
+            });
+
+            if (error) {
+                console.error("Login error:", error.message);
+            } else {
+                console.log("User logged in successfully!", data);
+            }
         } catch (error) {
-            console.error("Login error:", error.message);
+            console.error("Unexpected error during login:", error.message);
         }
     };
 
-    // Handle Google login
+    // Handle Google login using Firebase
     const handleGoogleLogin = async () => {
         try {
             const provider = new GoogleAuthProvider();
